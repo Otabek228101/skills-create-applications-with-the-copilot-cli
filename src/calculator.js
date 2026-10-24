@@ -1,6 +1,33 @@
 #!/usr/bin/env node
 
-// Supported operations: addition (+), subtraction (-), multiplication (*), and division (/).
+function modulo(a, b) {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    throw new TypeError("Operands must be finite numbers.");
+  }
+  if (b === 0) {
+    throw new RangeError("Cannot modulo by zero.");
+  }
+  return a % b;
+}
+
+function power(base, exponent) {
+  if (!Number.isFinite(base) || !Number.isFinite(exponent)) {
+    throw new TypeError("Operands must be finite numbers.");
+  }
+  return base ** exponent;
+}
+
+function squareRoot(n) {
+  if (!Number.isFinite(n)) {
+    throw new TypeError("Operand must be a finite number.");
+  }
+  if (n < 0) {
+    throw new RangeError("Cannot calculate the square root of a negative number.");
+  }
+  return Math.sqrt(n);
+}
+
+// Supported operations: addition (+), subtraction (-), multiplication (*), division (/), modulo (%), and exponentiation (^).
 function calculate(first, operator, second) {
   if (!Number.isFinite(first) || !Number.isFinite(second)) {
     throw new TypeError("Operands must be finite numbers.");
@@ -18,14 +45,26 @@ function calculate(first, operator, second) {
         throw new RangeError("Cannot divide by zero.");
       }
       return first / second;
+    case "%":
+      return modulo(first, second);
+    case "^":
+      return power(first, second);
     default:
-      throw new Error(`Unsupported operation "${operator}". Use +, -, *, or /.`);
+      throw new Error(`Unsupported operation "${operator}". Use +, -, *, /, %, or ^.`);
   }
 }
 
 function main(args) {
+  if (args.length === 2 && args[0] === "sqrt") {
+    if (args[1].trim() === "") {
+      throw new TypeError("Operand must be a finite number.");
+    }
+    console.log(squareRoot(Number(args[1])));
+    return;
+  }
+
   if (args.length !== 3) {
-    throw new Error("Usage: node src/calculator.js <number> <+|-|*|/> <number>");
+    throw new Error("Usage: node src/calculator.js <number> <+|-|*|/|%|^> <number> or sqrt <number>");
   }
 
   const [firstInput, operator, secondInput] = args;
@@ -46,4 +85,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { calculate };
+module.exports = { calculate, modulo, power, squareRoot };
